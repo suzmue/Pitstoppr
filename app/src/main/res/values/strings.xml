@@ -9,5 +9,17 @@
     <string name="button_submit">Submit</string>
     <string name="title_activity_trip">TripActivity</string>
     <string name="title_activity_settings2">Settings2Activity</string>
+    <resources>
+        <string-array name="mile_range_array">
+            <item>Mercury</item>
+            <item>Venus</item>
+            <item>Earth</item>
+            <item>Mars</item>
+            <item>Jupiter</item>
+            <item>Saturn</item>
+            <item>Uranus</item>
+            <item>Neptune</item>
+        </string-array>
+    </resources>
 
 </resources>
