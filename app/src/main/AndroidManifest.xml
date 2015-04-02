@@ -30,6 +30,9 @@
             android:name=".Settings2Activity"
             android:label="@string/title_activity_settings2" >
         </activity>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCcWJIhDLElL5-YA-VkMtDOcsfkaaXC10U"/>
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
