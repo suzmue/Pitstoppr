@@ -17,13 +17,15 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /*
 A trip has been started when this activity is active
 
 Updates user location every UPDATE_INTERVAL_IN_MILLISECONDS
-On start:
+On location changed:
  */
 public class TripActivity extends ActionBarActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -33,7 +35,7 @@ public class TripActivity extends ActionBarActivity implements
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 20000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -79,7 +81,7 @@ public class TripActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip);
 
-        mRequestingLocationUpdates = false;
+        mRequestingLocationUpdates = true;
         mLastUpdateTime = "";
 
         // Kick off the process of building a GoogleApiClient and requesting the LocationServices
@@ -236,6 +238,14 @@ public class TripActivity extends ActionBarActivity implements
         if (mRequestingLocationUpdates) {
             startLocationUpdates();
         }
+    }
+
+    /**
+     * @return the users preferred restaurants as a list of strings
+     */
+    private List<String> getPreferredRestaurants(){
+        //TODO
+        return new ArrayList<String>();
     }
 
     /**
