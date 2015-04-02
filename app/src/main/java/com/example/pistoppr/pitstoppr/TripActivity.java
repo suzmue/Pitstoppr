@@ -1,14 +1,13 @@
 package com.example.pistoppr.pitstoppr;
 
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -16,6 +15,21 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +49,12 @@ public class TripActivity extends ActionBarActivity implements
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 20000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+
+    /**
+     * Radius from current location to search for preferred restaurants (in meters)
+     */
+    private static int searchRadius = 5000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -241,11 +260,42 @@ public class TripActivity extends ActionBarActivity implements
     }
 
     /**
-     * @return the users preferred restaurants as a list of strings
+     * @return the users preferred restaurants as a string of the format:
+     *  restaurant1Name|restaurant2Name|...
      */
-    private List<String> getPreferredRestaurants(){
+    private String getPreferredRestaurants(){
         //TODO
-        return new ArrayList<String>();
+        return "chipotle";
+    }
+
+    private JSONArray getRestaurantResults(String restaurantChoices, Location location){
+        JSONArray results = null;
+        try {
+            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ location.getLatitude()+"," +location.getLongitude() + "&radius=" + searchRadius + "&rankBy=distance&types="+ URLEncoder.encode(restaurantChoices, "UTF-8")+"&sensor=true&key=GOOGLE_MAPS_KEY";
+            HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
+            HttpConnectionParams.setSoTimeout(httpParams, 30000);
+            DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
+            HttpGet httpGet = new HttpGet(url);
+            httpGet.setHeader("Content-type", "application/json");
+            ResponseHandler responseHandler = new BasicResponseHandler();
+            String response = (String) httpClient.execute(httpGet, responseHandler);
+
+            if (response != null) {
+                JSONObject mResult = new JSONObject(response);
+                results = mResult.getJSONArray("results");
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return results;
+
     }
 
     /**
@@ -255,6 +305,16 @@ public class TripActivity extends ActionBarActivity implements
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        String restaurantChoices = getPreferredRestaurants();
+        JSONArray restaurantResults = getRestaurantResults(restaurantChoices, location);
+        System.out.println(restaurantResults);
+        if (restaurantResults != null){
+            if (restaurantResults.length() != 0){
+                //TODO
+                //Notify user
+            }
+        }
+        //If restaurantResults != null, check if empty. If not empty, give notification
     }
 
     @Override
