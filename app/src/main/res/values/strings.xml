@@ -10,14 +10,10 @@
     <string name="title_activity_trip">TripActivity</string>
     <string name="title_activity_settings2">Settings2Activity</string>
     <string-array name="mile_range_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+        <item>1 mile</item>
+        <item>5 miles</item>
+        <item>10 miles</item>
+        <item>25 miles</item>
     </string-array>
 
 </resources>
