@@ -67,6 +67,7 @@ public class Settings2Activity extends ActionBarActivity {
             restaurantString.append("\r\n");
         }
         restaurantTextView.setText(restaurantString);
+        ((EditText) findViewById(R.id.editText)).setText("");
     }
 
     public void addItemsToSpinner() {
