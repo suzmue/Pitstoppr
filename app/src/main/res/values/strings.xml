@@ -15,5 +15,6 @@
         <item>10 miles</item>
         <item>25 miles</item>
     </string-array>
+    <string name="enter_restaurant">Enter a Restaurant</string>
 
 </resources>

@@ -1,19 +1,33 @@
 package com.example.pistoppr.pitstoppr;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.view.View;
+import android.widget.TextView;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class Settings2Activity extends ActionBarActivity {
+
+    //SharedPreferences.Editor editor;
+    //StringBuilder listOfRestaurants;
+    Set<String> setOfRestaurants;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings2);
+        //listOfRestaurants = new StringBuilder();
+        setOfRestaurants = new HashSet<String>();
     }
 
 
@@ -37,6 +51,22 @@ public class Settings2Activity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void addRestaurant(View view) {
+        EditText restaurant = (EditText) findViewById(R.id.editText);
+        TextView restaurantTextView = (TextView) findViewById(R.id.textView3);
+        //listOfRestaurants.append(restaurant.getText().toString());
+        //listOfRestaurants.append(", ");
+        //restaurantTextView.setText(listOfRestaurants);
+        setOfRestaurants.add(restaurant.getText().toString());
+        StringBuilder restaurantString = new StringBuilder();
+        for (String res : setOfRestaurants){
+            restaurantString.append(res);
+            restaurantString.append("\r\n");
+        }
+        restaurantTextView.setText(restaurantString);
     }
 
     public void addItemsToSpinner() {
