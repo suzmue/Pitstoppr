@@ -1,7 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:orientation = "vertical"
-    tools:context="com.example.pistoppr.pitstoppr.Settings2Activity">
+    tools:context="com.example.pistoppr.pitstoppr.Settings2Activity"
+    android:paddingLeft="8dp" android:paddingRight="8dp"
+    android:paddingTop="4dp" android:paddingBottom="4dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -20,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_submit"
+        android:layout_gravity="right"
         android:onClick="addRestaurant"/>
 
     <TextView
@@ -31,7 +34,7 @@
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:entries="@array/mile_range_array"
         android:spinnerMode="dropdown" />
@@ -40,13 +43,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Current Restaurants"/>
+        android:text="Current Restaurants"
+        android:id="@+id/textView4"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_weight="1"
+        android:textColor="#ff1486ff"
         android:id="@+id/textView3"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Clear Restaurants"
+        android:onClick="clearRestaurants"/>
 
 
 </LinearLayout>

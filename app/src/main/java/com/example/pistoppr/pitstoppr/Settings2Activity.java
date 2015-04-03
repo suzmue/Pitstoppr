@@ -20,14 +20,26 @@ public class Settings2Activity extends ActionBarActivity {
 
     //SharedPreferences.Editor editor;
     //StringBuilder listOfRestaurants;
-    Set<String> setOfRestaurants;
+    Set<String> defaultRestaurants;
+    Set<String> mySetOfRestaurants;
+    SharedPreferences restaurantPreferences;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings2);
         //listOfRestaurants = new StringBuilder();
-        setOfRestaurants = new HashSet<String>();
+        defaultRestaurants = new HashSet<String>();
+        restaurantPreferences = getPreferences(MODE_PRIVATE);
+        mySetOfRestaurants = restaurantPreferences.getStringSet("restaurants", defaultRestaurants);
+        StringBuilder restaurantString = new StringBuilder();
+        for (String res : mySetOfRestaurants) {
+            restaurantString.append(res);
+            restaurantString.append("\r\n");
+        }
+        TextView restaurantTextView = (TextView) findViewById(R.id.textView3);
+        restaurantTextView.setText(restaurantString);
     }
 
 
@@ -55,19 +67,22 @@ public class Settings2Activity extends ActionBarActivity {
 
 
     public void addRestaurant(View view) {
+        editor = restaurantPreferences.edit();
+        editor.clear();
+        editor.commit();
         EditText restaurant = (EditText) findViewById(R.id.editText);
         TextView restaurantTextView = (TextView) findViewById(R.id.textView3);
-        //listOfRestaurants.append(restaurant.getText().toString());
-        //listOfRestaurants.append(", ");
-        //restaurantTextView.setText(listOfRestaurants);
-        setOfRestaurants.add(restaurant.getText().toString());
+        mySetOfRestaurants.add(restaurant.getText().toString());
+        ((EditText) findViewById(R.id.editText)).setText("");
+        restaurantPreferences = getPreferences(MODE_PRIVATE);
+        editor.putStringSet("restaurants", mySetOfRestaurants);
+        editor.commit();
         StringBuilder restaurantString = new StringBuilder();
-        for (String res : setOfRestaurants){
+        for (String res : mySetOfRestaurants){
             restaurantString.append(res);
             restaurantString.append("\r\n");
         }
         restaurantTextView.setText(restaurantString);
-        ((EditText) findViewById(R.id.editText)).setText("");
     }
 
     public void addItemsToSpinner() {
@@ -79,6 +94,15 @@ public class Settings2Activity extends ActionBarActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
+    }
+
+    public void clearRestaurants(View view) {
+        editor = restaurantPreferences.edit();
+        editor.clear();
+        editor.commit();
+        mySetOfRestaurants.clear();
+        TextView restaurantTextView = (TextView) findViewById(R.id.textView3);
+        restaurantTextView.setText("");
     }
 }
 
