@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -106,6 +108,7 @@ public class TripActivity extends ActionBarActivity implements
         // Kick off the process of building a GoogleApiClient and requesting the LocationServices
         // API.
         buildGoogleApiClient();
+        displayText();
     }
 
     /**
@@ -341,5 +344,25 @@ public class TripActivity extends ActionBarActivity implements
         savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
         savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    /** Called when the user clicks the End Trip Button */
+    public void endTrip(View view){
+        //Brings back to MainActivity
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    /** Called when the user clicks the Settings Button */
+    public void openSettings(View view){
+        //Opens the settings
+        Intent intent = new Intent(this, Settings2Activity.class);
+        startActivity(intent);
+    }
+
+    public void displayText() {
+        TextView textView = (TextView) findViewById(R.id.tripTextView);
+        String string = "hello";
+        textView.setText(string);
     }
 }

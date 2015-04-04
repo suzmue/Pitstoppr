@@ -15,4 +15,5 @@
         android:layout_height="wrap_content"
         android:text="@string/button_settings"
         android:onClick="openSettings"/>
+
 </LinearLayout>
