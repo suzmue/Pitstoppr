@@ -340,12 +340,15 @@ public class TripActivity extends ActionBarActivity implements
 
     private void launchNotification(JSONArray arr) {
         NotificationCompat.Builder mBuilder;
+        Object o = arr.remove(0);
+        String restaurantName = "";
+        double destinationLatitude = 0.0;
+        double destinationLongitude = 0.0;
         mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("Restaurant Ahead!")
-                .setContentText(arr.remove(0).toString());
-        double destinationLatitude = 0.0;
-        double destinationLongitude = 0.0;
+                .setContentText(restaurantName + ". Click on me to go!");
+
         String uri = String.format("http://maps.google.com/maps?daddr=%f,%f", destinationLatitude, destinationLongitude);
         Intent resultIntent = new Intent(android.content.Intent.ACTION_VIEW,
                 Uri.parse(uri));
