@@ -1,10 +1,13 @@
 package com.example.pistoppr.pitstoppr;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,9 +36,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /*
 A trip has been started when this activity is active
@@ -315,6 +316,7 @@ public class TripActivity extends ActionBarActivity implements
             if (restaurantResults.length() != 0){
                 //TODO
                 //Notify user
+                launchNotification(restaurantResults);
             }
         }
         //If restaurantResults != null, check if empty. If not empty, give notification
@@ -334,6 +336,36 @@ public class TripActivity extends ActionBarActivity implements
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+    }
+
+    private void launchNotification(JSONArray arr) {
+        NotificationCompat.Builder mBuilder;
+        mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle("Restaurant Ahead!")
+                .setContentText(arr.remove(0).toString());
+        double destinationLatitude = 0.0;
+        double destinationLongitude = 0.0;
+        String uri = String.format("http://maps.google.com/maps?daddr=%f,%f", destinationLatitude, destinationLongitude);
+        Intent resultIntent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse(uri));
+        // Because clicking the notification opens a new ("special") activity, there's
+        // no need to create an artificial back stack.
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        // Sets an ID for the notification
+        int mNotificationId = 001;
+        // Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
     /**
