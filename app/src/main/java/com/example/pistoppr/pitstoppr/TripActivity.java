@@ -316,7 +316,6 @@ public class TripActivity extends ActionBarActivity implements
         System.out.println(restaurantResults);
         if (restaurantResults != null){
             if (restaurantResults.length() != 0){
-                //TODO
                 //Notify user
                 launchNotification(restaurantResults);
             }
@@ -340,7 +339,6 @@ public class TripActivity extends ActionBarActivity implements
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void launchNotification(JSONArray arr) {
         NotificationCompat.Builder mBuilder;
         JSONObject jsonRestaurant;
