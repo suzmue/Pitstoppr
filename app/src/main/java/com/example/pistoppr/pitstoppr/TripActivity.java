@@ -1,10 +1,12 @@
 package com.example.pistoppr.pitstoppr;
 
+import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -338,39 +340,48 @@ public class TripActivity extends ActionBarActivity implements
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void launchNotification(JSONArray arr) {
         NotificationCompat.Builder mBuilder;
-        Object o = arr.remove(0);
-        String restaurantName = "";
-        double destinationLatitude = 0.0;
-        double destinationLongitude = 0.0;
-        mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle("Restaurant Ahead!")
-                .setContentText(restaurantName + ". Click on me to go!");
+        JSONObject jsonRestaurant;
+        try {
+            jsonRestaurant = arr.getJSONObject(0);
+            String restaurantName = jsonRestaurant.getString("name");
+            JSONObject restaurantGeometry = jsonRestaurant.getJSONObject("geometry");
+            Double destinationLatitude = restaurantGeometry.getDouble("lat");
+            Double destinationLongitude = restaurantGeometry.getDouble("lng");
+            if (restaurantName != null && destinationLatitude != null && destinationLongitude != null){
+                mBuilder = new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("Restaurant Ahead!")
+                        .setContentText(restaurantName + ". Click on me to go!");
 
-        String uri = String.format("http://maps.google.com/maps?daddr=%f,%f", destinationLatitude, destinationLongitude);
-        Intent resultIntent = new Intent(android.content.Intent.ACTION_VIEW,
-                Uri.parse(uri));
-        resultIntent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                String uri = String.format("http://maps.google.com/maps?daddr=%f,%f", destinationLatitude, destinationLongitude);
+                Intent resultIntent = new Intent(android.content.Intent.ACTION_VIEW,
+                        Uri.parse(uri));
+                resultIntent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
 
-        // Because clicking the notification opens a new ("special") activity, there's
-        // no need to create an artificial back stack.
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        this,
-                        0,
-                        resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        // Sets an ID for the notification
-        int mNotificationId = 001;
-        // Gets an instance of the NotificationManager service
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // Builds the notification and issues it.
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+                // Because clicking the notification opens a new ("special") activity, there's
+                // no need to create an artificial back stack.
+                PendingIntent resultPendingIntent =
+                        PendingIntent.getActivity(
+                                this,
+                                0,
+                                resultIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
+                mBuilder.setContentIntent(resultPendingIntent);
+                // Sets an ID for the notification
+                int mNotificationId = 001;
+                // Gets an instance of the NotificationManager service
+                NotificationManager mNotifyMgr =
+                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                // Builds the notification and issues it.
+                mNotifyMgr.notify(mNotificationId, mBuilder.build());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
