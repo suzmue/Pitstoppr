@@ -352,6 +352,8 @@ public class TripActivity extends ActionBarActivity implements
         String uri = String.format("http://maps.google.com/maps?daddr=%f,%f", destinationLatitude, destinationLongitude);
         Intent resultIntent = new Intent(android.content.Intent.ACTION_VIEW,
                 Uri.parse(uri));
+        resultIntent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.
         PendingIntent resultPendingIntent =
