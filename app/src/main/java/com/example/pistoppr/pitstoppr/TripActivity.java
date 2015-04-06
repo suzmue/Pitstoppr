@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -39,6 +40,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /*
 A trip has been started when this activity is active
@@ -263,6 +266,20 @@ public class TripActivity extends ActionBarActivity implements
         if (mRequestingLocationUpdates) {
             startLocationUpdates();
         }
+    }
+
+    public void showPreferredRestaurants(View view){
+        Set<String> defaultRestaurants = new HashSet<String>();
+        SharedPreferences restaurantPreferences = getPreferences(MODE_PRIVATE);
+        Set<String> mySetOfRestaurants = restaurantPreferences.getStringSet("restaurants", defaultRestaurants);
+        StringBuilder restaurantString = new StringBuilder();
+        restaurantString.append(mySetOfRestaurants.size());
+        for (String res : mySetOfRestaurants) {
+            restaurantString.append(res);
+            restaurantString.append("\r\n");
+        }
+        TextView restaurantTextView = (TextView) findViewById(R.id.tripTextView);
+        restaurantTextView.setText(restaurantString);
     }
 
     /**
