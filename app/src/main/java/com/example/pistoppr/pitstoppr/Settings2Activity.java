@@ -31,7 +31,7 @@ public class Settings2Activity extends ActionBarActivity {
         setContentView(R.layout.activity_settings2);
         //listOfRestaurants = new StringBuilder();
         defaultRestaurants = new HashSet<String>();
-        restaurantPreferences = getPreferences(MODE_PRIVATE);
+        restaurantPreferences = getSharedPreferences("restaurantPrefs", MODE_PRIVATE);
         mySetOfRestaurants = restaurantPreferences.getStringSet("restaurants", defaultRestaurants);
         StringBuilder restaurantString = new StringBuilder();
         for (String res : mySetOfRestaurants) {
@@ -74,7 +74,7 @@ public class Settings2Activity extends ActionBarActivity {
         TextView restaurantTextView = (TextView) findViewById(R.id.textView3);
         mySetOfRestaurants.add(restaurant.getText().toString());
         ((EditText) findViewById(R.id.editText)).setText("");
-        restaurantPreferences = getPreferences(MODE_PRIVATE);
+        restaurantPreferences = getSharedPreferences("restaurantPrefs", MODE_PRIVATE);
         editor.putStringSet("restaurants", mySetOfRestaurants);
         editor.commit();
         StringBuilder restaurantString = new StringBuilder();

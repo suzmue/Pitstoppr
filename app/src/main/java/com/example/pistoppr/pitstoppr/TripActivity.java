@@ -1,6 +1,7 @@
 package com.example.pistoppr.pitstoppr;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -35,7 +37,9 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /*
 A trip has been started when this activity is active
@@ -108,7 +112,6 @@ public class TripActivity extends ActionBarActivity implements
         // Kick off the process of building a GoogleApiClient and requesting the LocationServices
         // API.
         buildGoogleApiClient();
-        displayText();
     }
 
     /**
@@ -360,9 +363,16 @@ public class TripActivity extends ActionBarActivity implements
         startActivity(intent);
     }
 
-    public void displayText() {
-        TextView textView = (TextView) findViewById(R.id.tripTextView);
-        String string = "hello";
-        textView.setText(string);
+    public void displayText(View view) {
+        Set<String> defaultRestaurants = new HashSet<String>();
+        SharedPreferences restaurantPreferences = getSharedPreferences("restaurantPrefs", MODE_PRIVATE);
+        Set<String> mySetOfRestaurants = restaurantPreferences.getStringSet("restaurants", defaultRestaurants);
+        StringBuilder restaurantString = new StringBuilder();
+        for (String res : mySetOfRestaurants) {
+            restaurantString.append(res);
+            restaurantString.append("\r\n");
+        }
+        TextView restaurantTextView = (TextView) findViewById(R.id.tripTextView);
+        restaurantTextView.setText(restaurantString);
     }
 }
