@@ -516,7 +516,7 @@ public class TripActivity extends ActionBarActivity implements
             restaurantName = "Cosi";
             destinationLatitude = 42.362521;
             destinationLongitude = -71.0876597;
-        } else if (preferredRestaurantSet.contains("dunkin donuts")){
+        } else if (preferredRestaurantSet.contains("dunkin donuts") || preferredRestaurantSet.contains("dunkin' donuts")){
             restaurantName = "Dunkin' Donuts";
             destinationLatitude = 42.3599624;
             destinationLongitude = -71.0957251;
@@ -524,14 +524,27 @@ public class TripActivity extends ActionBarActivity implements
             restaurantName = "Subway";
             destinationLatitude = 42.3606192;
             destinationLongitude = -71.0967217;
-        } else if (preferredRestaurantSet.contains("sebastians")){
+        } else if (preferredRestaurantSet.contains("sebastians") || preferredRestaurantSet.contains("sebastian's")){
             restaurantName = "Sebastians";
             destinationLatitude = 42.3628686;
             destinationLongitude = -71.0891123;
-        }
-        else {
-            return;
-        }
+        } else if (preferredRestaurantSet.contains("mcdonalds") || preferredRestaurantSet.contains("mcdonald's")){
+            restaurantName = "McDonald's";
+            destinationLatitude = 42.3644454;
+            destinationLongitude = -71.103187;
+        } else if (preferredRestaurantSet.contains("clover") || preferredRestaurantSet.contains("clover food lab")){
+            restaurantName = "Clover Food Lab";
+            destinationLatitude = 42.3644454;
+            destinationLongitude = -71.103187;
+        } else if (preferredRestaurantSet.contains("quiznos")){
+            restaurantName = "Quiznos";
+            destinationLatitude = 42.3625032;
+            destinationLongitude = -71.0922972;
+        } else if (preferredRestaurantSet.contains("bertuccis") || preferredRestaurantSet.contains("bertucci's")){
+            restaurantName = "Bertucci's";
+            destinationLatitude = 42.3629412;
+            destinationLongitude = -71.0975141;
+        } else return;
         mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("Restaurant Ahead!")
@@ -629,7 +642,7 @@ public class TripActivity extends ActionBarActivity implements
         startActivity(intent);
     }
 
-    public void displayText(View view) {
+/*    public void displayText(View view) {
         Set<String> defaultRestaurants = new HashSet<String>();
         SharedPreferences restaurantPreferences = getSharedPreferences("restaurantPrefs", MODE_PRIVATE);
         Set<String> mySetOfRestaurants = restaurantPreferences.getStringSet("restaurants", defaultRestaurants);
@@ -641,5 +654,5 @@ public class TripActivity extends ActionBarActivity implements
         String locationString = mCurrentLocation.toString();
         TextView restaurantTextView = (TextView) findViewById(R.id.tripTextView);
         restaurantTextView.setText(debuggerString);
-    }
+    }*/
 }
