@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -87,6 +88,8 @@ public class TripActivity extends ActionBarActivity implements
      * Represents a geographical location.
      */
     protected Location mCurrentLocation;
+
+    private String debuggerString;
 
     // Keys for storing activity state in the Bundle.
     protected final static String REQUESTING_LOCATION_UPDATES_KEY = "requesting-location-updates-key";
@@ -269,57 +272,62 @@ public class TripActivity extends ActionBarActivity implements
         }
     }
 
-    public void showPreferredRestaurants(View view){
-        Set<String> defaultRestaurants = new HashSet<String>();
-        SharedPreferences restaurantPreferences = getPreferences(MODE_PRIVATE);
-        Set<String> mySetOfRestaurants = restaurantPreferences.getStringSet("restaurants", defaultRestaurants);
-        StringBuilder restaurantString = new StringBuilder();
-        restaurantString.append(mySetOfRestaurants.size());
-        for (String res : mySetOfRestaurants) {
-            restaurantString.append(res);
-            restaurantString.append("\r\n");
-        }
-        TextView restaurantTextView = (TextView) findViewById(R.id.tripTextView);
-        restaurantTextView.setText(restaurantString);
-    }
 
     /**
      * @return the users preferred restaurants as a string of the format:
      *  restaurant1Name|restaurant2Name|...
      */
     private String getPreferredRestaurants(){
-        //TODO
-        return "chipotle";
+        Set<String> defaultRestaurants = new HashSet<String>();
+        SharedPreferences restaurantPreferences = getSharedPreferences("restaurantPrefs", MODE_PRIVATE);
+        Set<String> mySetOfRestaurants = restaurantPreferences.getStringSet("restaurants", defaultRestaurants);
+        String returnString = "";
+        for (String restaurant: mySetOfRestaurants){
+            returnString += restaurant + "|";
+        }
+        //return returnString.substring(0,returnString.length() - 1);
+        return "food";
     }
 
-    private JSONArray getRestaurantResults(String restaurantChoices, Location location){
-        JSONArray results = null;
-        try {
-            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ location.getLatitude()+"," +location.getLongitude() + "&radius=" + searchRadius + "&rankBy=distance&types="+ URLEncoder.encode(restaurantChoices, "UTF-8")+"&sensor=true&key=GOOGLE_MAPS_KEY";
-            HttpParams httpParams = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
-            HttpConnectionParams.setSoTimeout(httpParams, 30000);
-            DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
-            HttpGet httpGet = new HttpGet(url);
-            httpGet.setHeader("Content-type", "application/json");
-            ResponseHandler responseHandler = new BasicResponseHandler();
-            String response = (String) httpClient.execute(httpGet, responseHandler);
-
-            if (response != null) {
-                JSONObject mResult = new JSONObject(response);
-                results = mResult.getJSONArray("results");
+    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            try {
+                return getRestaurantHTTP(urls[0]);
+            } catch (JSONException e) {
+                return "JSONException";
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return results;
+        @Override
+        protected void onPostExecute(String result) {
+            debuggerString = result;
+            System.out.println(result);
+        }
+    }
 
+    private String getRestaurantHTTP(String url) throws JSONException {
+        JSONArray results = null;
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
+        HttpConnectionParams.setSoTimeout(httpParams, 30000);
+        DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader("Content-type", "application/json");
+        ResponseHandler responseHandler = new BasicResponseHandler();
+        String response;
+        try {
+            response = (String) httpClient.execute(httpGet, responseHandler);
+        } catch (IOException e) {
+            return e.toString();
+        }
+        if (response != null) {
+            JSONObject mResult = new JSONObject(response);
+            results = mResult.getJSONArray("results");
+        }
+        if (results != null){
+            launchNotification(results);
+        }
+        return response;
     }
 
     /**
@@ -330,14 +338,15 @@ public class TripActivity extends ActionBarActivity implements
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         String restaurantChoices = getPreferredRestaurants();
-        JSONArray restaurantResults = getRestaurantResults(restaurantChoices, location);
-        System.out.println(restaurantResults);
-        if (restaurantResults != null){
-            if (restaurantResults.length() != 0){
-                //Notify user
-                launchNotification(restaurantResults);
-            }
+        String mapsAPIKey = "AIzaSyCcWJIhDLElL5-YA-VkMtDOcsfkaaXC10U";
+        try {
+            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ location.getLatitude()+"," +location.getLongitude() + "&radius=" + searchRadius + "&types=food";
+            String url2 = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ location.getLatitude()+"," +location.getLongitude() + "&radius=" + searchRadius + "&rankBy=distance&types="+ URLEncoder.encode(restaurantChoices, "UTF-8")+"&sensor=true&key=" + mapsAPIKey;
+            new HttpAsyncTask().execute(url);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
+
         //If restaurantResults != null, check if empty. If not empty, give notification
     }
 
@@ -433,7 +442,8 @@ public class TripActivity extends ActionBarActivity implements
             restaurantString.append(res);
             restaurantString.append("\r\n");
         }
+        String locationString = mCurrentLocation.toString();
         TextView restaurantTextView = (TextView) findViewById(R.id.tripTextView);
-        restaurantTextView.setText(restaurantString);
+        restaurantTextView.setText(debuggerString);
     }
 }
