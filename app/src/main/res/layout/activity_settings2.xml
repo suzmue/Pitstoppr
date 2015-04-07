@@ -3,7 +3,8 @@
     android:layout_height="match_parent" android:orientation = "vertical"
     tools:context="com.example.pistoppr.pitstoppr.Settings2Activity"
     android:paddingLeft="8dp" android:paddingRight="8dp"
-    android:paddingTop="4dp" android:paddingBottom="4dp">
+    android:paddingTop="4dp" android:paddingBottom="4dp"
+    android:background="#ffc3fffa">
 
     <TextView
         android:layout_width="wrap_content"
@@ -16,14 +17,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/enter_restaurant"
-        android:id="@+id/editText"/>
+        android:id="@+id/editText"
+        android:background="#fffbfdfa"
+        android:autoText="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_submit"
         android:layout_gravity="right"
-        android:onClick="addRestaurant"/>
+        android:onClick="addRestaurant"
+        android:background="#fffff9bf" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -50,15 +54,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="#ff1486ff"
-        android:id="@+id/textView3"/>
+        android:textColor="#ff0e5bae"
+        android:id="@+id/textView3"
+        android:textSize="30dp"
+        android:textIsSelectable="false" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Clear Restaurants"
-        android:onClick="clearRestaurants"/>
+        android:onClick="clearRestaurants"
+        android:background="#fffff9bf" />
 
 
 </LinearLayout>

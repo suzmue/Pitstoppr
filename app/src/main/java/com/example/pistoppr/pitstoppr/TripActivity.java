@@ -505,10 +505,31 @@ public class TripActivity extends ActionBarActivity implements
         Double destinationLatitude;
         Double destinationLongitude;
         if (preferredRestaurantSet.contains("chipotle")){
-            restaurantName = "chipotle";
+            restaurantName = "Chipotle";
             destinationLatitude = 42.362576;
             destinationLongitude = -71.085349;
-        } else {
+        } else if (preferredRestaurantSet.contains("starbucks")) {
+            restaurantName = "Starbucks";
+            destinationLatitude = 42.3624239;
+            destinationLongitude = -71.0877053;
+        } else if (preferredRestaurantSet.contains("cosi")){
+            restaurantName = "Cosi";
+            destinationLatitude = 42.362521;
+            destinationLongitude = -71.0876597;
+        } else if (preferredRestaurantSet.contains("dunkin donuts")){
+            restaurantName = "Dunkin' Donuts";
+            destinationLatitude = 42.3599624;
+            destinationLongitude = -71.0957251;
+        } else if (preferredRestaurantSet.contains("subway")){
+            restaurantName = "Subway";
+            destinationLatitude = 42.3606192;
+            destinationLongitude = -71.0967217;
+        } else if (preferredRestaurantSet.contains("sebastians")){
+            restaurantName = "Sebastians";
+            destinationLatitude = 42.3628686;
+            destinationLongitude = -71.0891123;
+        }
+        else {
             return;
         }
         mBuilder = new NotificationCompat.Builder(this)
