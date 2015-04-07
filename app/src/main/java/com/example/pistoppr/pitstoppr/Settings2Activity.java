@@ -71,7 +71,7 @@ public class Settings2Activity extends ActionBarActivity {
         editor.commit();
         EditText restaurant = (EditText) findViewById(R.id.editText);
         TextView restaurantTextView = (TextView) findViewById(R.id.textView3);
-        mySetOfRestaurants.add(restaurant.getText().toString());
+        mySetOfRestaurants.add(restaurant.getText().toString().toLowerCase());
         ((EditText) findViewById(R.id.editText)).setText("");
         restaurantPreferences = getSharedPreferences("restaurantPrefs", MODE_PRIVATE);
         editor.putStringSet("restaurants", mySetOfRestaurants);

@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'AndroidKey'
+            keyPassword 'forsyth'
+            storeFile file('/Users/alexforsyth/Documents/21w789/Pitstoppr/android.jks')
+            storePassword 'forsyth'
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     defaultConfig {
         applicationId "com.example.pistoppr.pitstoppr"
         minSdkVersion 15

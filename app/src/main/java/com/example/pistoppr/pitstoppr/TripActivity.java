@@ -21,9 +21,20 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.AutocompletePredictionBuffer;
+import com.google.android.gms.location.places.GeoDataApi;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -62,10 +73,11 @@ public class TripActivity extends ActionBarActivity implements
      */
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
+    public AutocompleteFilter mAutoCompleteFilter;
     /**
      * Radius from current location to search for preferred restaurants (in meters)
      */
-    private static int searchRadius = 5000;
+    private static int searchRadius = 5;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -131,6 +143,7 @@ public class TripActivity extends ActionBarActivity implements
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
                 .build();
         createLocationRequest();
     }
@@ -289,6 +302,13 @@ public class TripActivity extends ActionBarActivity implements
         return "food";
     }
 
+    private Set<String> getPreferredRestaurantSet(){
+        Set<String> defaultRestaurants = new HashSet<String>();
+        SharedPreferences restaurantPreferences = getSharedPreferences("restaurantPrefs", MODE_PRIVATE);
+        Set<String> mySetOfRestaurants = restaurantPreferences.getStringSet("restaurants", defaultRestaurants);
+        return mySetOfRestaurants;
+    }
+
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -330,6 +350,84 @@ public class TripActivity extends ActionBarActivity implements
         return response;
     }
 
+    private void notifyUsersWithHttp(){
+        String restaurantChoices = getPreferredRestaurants();
+        String mapsAPIKey = "AIzaSyCcWJIhDLElL5-YA-VkMtDOcsfkaaXC10U";
+        try {
+            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ mCurrentLocation.getLatitude()+"," +mCurrentLocation.getLongitude() + "&radius=" + searchRadius + "&types=food&key=" + mapsAPIKey;
+            String url2 = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ mCurrentLocation.getLatitude()+"," +mCurrentLocation.getLongitude() + "&radius=" + searchRadius + "&rankBy=distance&types="+ URLEncoder.encode(restaurantChoices, "UTF-8")+"&sensor=true&key=" + mapsAPIKey;
+            new HttpAsyncTask().execute(url);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Gets a change in latitude from a given search radius
+     */
+    private double getDeltaLatitude(){
+        return searchRadius/110.54;
+    }
+
+    private double getDeltaLongitude(){
+        double cosLat = Math.cos(mCurrentLocation.getLatitude());
+        cosLat = cosLat*111.320;
+        return searchRadius/cosLat;
+    }
+
+    private LatLngBounds getLatLngBounds(){
+        double deltaLat = getDeltaLatitude();
+        double deltaLon = getDeltaLongitude();
+        LatLngBounds bounds = new LatLngBounds.Builder()
+                .include(new LatLng(mCurrentLocation.getLatitude() + deltaLat, mCurrentLocation.getLongitude()))
+                .include(new LatLng(mCurrentLocation.getLatitude() - deltaLat, mCurrentLocation.getLongitude()))
+                .include(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude() + deltaLon))
+                .include(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude() - deltaLon))
+                .build();
+        return bounds;
+    }
+
+    private void notifyUsersWithPlacesApi(){
+        Set<String> restaurantSet = getPreferredRestaurantSet();
+        String query = "chipotle";
+        LatLngBounds mBounds = getLatLngBounds();
+        mAutoCompleteFilter = AutocompleteFilter.create(new HashSet<Integer>());
+        PendingResult<AutocompletePredictionBuffer> result = Places.GeoDataApi.getAutocompletePredictions(mGoogleApiClient, query, mBounds, mAutoCompleteFilter);
+        result.setResultCallback(mUpdatePlaceDetailsCallback);
+    }
+
+    /**
+     * Callback for results from a Places Geo Data API query that shows the first place result in
+     * the details view on screen.
+     */
+    private ResultCallback<AutocompletePredictionBuffer> mUpdatePlaceDetailsCallback
+            = new ResultCallback<AutocompletePredictionBuffer>() {
+        @Override
+        public void onResult(AutocompletePredictionBuffer buffer) {
+            if (!buffer.getStatus().isSuccess()) {
+                // Request did not complete successfully
+                Log.e(TAG, "Place query did not complete. Error: " + buffer.getStatus().toString());
+
+                return;
+            }
+            // Get the Place object from the buffer.
+            final AutocompletePrediction place = buffer.get(0);
+            String placeId = place.getPlaceId();
+            Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
+                    .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                        @Override
+                        public void onResult(PlaceBuffer places) {
+                            if (places.getStatus().isSuccess()) {
+                                final Place myPlace = places.get(0);
+                                launchNotificationFromPlaces(myPlace);
+                            }
+                            places.release();
+                        }
+                    });
+        }
+    };
+
+
     /**
      * Callback that fires when the location changes.
      */
@@ -337,16 +435,9 @@ public class TripActivity extends ActionBarActivity implements
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        String restaurantChoices = getPreferredRestaurants();
-        String mapsAPIKey = "AIzaSyCcWJIhDLElL5-YA-VkMtDOcsfkaaXC10U";
-        try {
-            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ location.getLatitude()+"," +location.getLongitude() + "&radius=" + searchRadius + "&types=food";
-            String url2 = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ location.getLatitude()+"," +location.getLongitude() + "&radius=" + searchRadius + "&rankBy=distance&types="+ URLEncoder.encode(restaurantChoices, "UTF-8")+"&sensor=true&key=" + mapsAPIKey;
-            new HttpAsyncTask().execute(url);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
+        //notifyUsersWithHttp();
+        //notifyUsersWithPlacesApi();
+        mockLaunchNotification();
         //If restaurantResults != null, check if empty. If not empty, give notification
     }
 
@@ -365,6 +456,88 @@ public class TripActivity extends ActionBarActivity implements
         // onConnectionFailed.
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
+
+    private void launchNotificationFromPlaces(Place myPlace) {
+        NotificationCompat.Builder mBuilder;
+
+        CharSequence restaurantName = myPlace.getName();
+        LatLng latlng = myPlace.getLatLng();
+        Double myLat = latlng.latitude;
+        Double myLong = latlng.longitude;
+        if (restaurantName != null && myLat != null && myLong != null){
+            mBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("Restaurant Ahead!")
+                    .setContentText(restaurantName + ". Click on me to go!");
+
+            String uri = String.format("http://maps.google.com/maps?daddr=%f,%f", myLat, myLong);
+            Intent resultIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(uri));
+            resultIntent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+
+            // Because clicking the notification opens a new ("special") activity, there's
+            // no need to create an artificial back stack.
+            PendingIntent resultPendingIntent =
+                    PendingIntent.getActivity(
+                            this,
+                            0,
+                            resultIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent);
+            // Sets an ID for the notification
+            int mNotificationId = 001;
+            // Gets an instance of the NotificationManager service
+            NotificationManager mNotifyMgr =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // Builds the notification and issues it.
+            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        }
+    }
+
+    //TODO
+    //Currently being used
+    private void mockLaunchNotification(){
+        NotificationCompat.Builder mBuilder;
+        //TODO check if chipotle
+        Set<String> preferredRestaurantSet = getPreferredRestaurantSet();
+        String restaurantName;
+        Double destinationLatitude;
+        Double destinationLongitude;
+        if (preferredRestaurantSet.contains("chipotle"){
+            restaurantName = "chipotle";
+            destinationLatitude = 42.362576;
+            destinationLongitude = -71.085349;
+        }
+        mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle("Restaurant Ahead!")
+                .setContentText(restaurantName + ". Click on me to go!");
+
+        String uri = String.format("http://maps.google.com/maps?daddr=%f,%f", destinationLatitude, destinationLongitude);
+        Intent resultIntent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse(uri));
+        resultIntent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+
+        // Because clicking the notification opens a new ("special") activity, there's
+        // no need to create an artificial back stack.
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        // Sets an ID for the notification
+        int mNotificationId = 001;
+        // Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    }
+
 
     private void launchNotification(JSONArray arr) {
         NotificationCompat.Builder mBuilder;
