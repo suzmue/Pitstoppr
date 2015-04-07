@@ -9,12 +9,12 @@
     <string name="button_submit">Submit</string>
     <string name="title_activity_trip">On Trip</string>
     <string name="title_activity_settings2">My Settings</string>
-    <string-array name="mile_range_array">
+<!--    <string-array name="mile_range_array">
         <item>1 mile</item>
         <item>5 miles</item>
         <item>10 miles</item>
         <item>25 miles</item>
-    </string-array>
+    </string-array>-->
     <string name="enter_restaurant">Enter a Restaurant</string>
 
 </resources>

@@ -84,7 +84,7 @@ public class Settings2Activity extends ActionBarActivity {
         restaurantTextView.setText(restaurantString);
     }
 
-    public void addItemsToSpinner() {
+/*    public void addItemsToSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -93,7 +93,7 @@ public class Settings2Activity extends ActionBarActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
-    }
+    }*/
 
     public void clearRestaurants(View view) {
         editor = restaurantPreferences.edit();
