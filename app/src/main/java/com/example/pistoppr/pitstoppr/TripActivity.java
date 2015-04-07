@@ -501,13 +501,15 @@ public class TripActivity extends ActionBarActivity implements
         NotificationCompat.Builder mBuilder;
         //TODO check if chipotle
         Set<String> preferredRestaurantSet = getPreferredRestaurantSet();
-        String restaurantName;
+        String restaurantName = "";
         Double destinationLatitude;
         Double destinationLongitude;
-        if (preferredRestaurantSet.contains("chipotle"){
+        if (preferredRestaurantSet.contains("chipotle")){
             restaurantName = "chipotle";
             destinationLatitude = 42.362576;
             destinationLongitude = -71.085349;
+        } else {
+            return;
         }
         mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
