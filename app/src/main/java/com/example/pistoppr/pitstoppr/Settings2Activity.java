@@ -1,19 +1,21 @@
 package com.example.pistoppr.pitstoppr;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
+
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
+
 
 
 public class Settings2Activity extends ActionBarActivity {
@@ -71,7 +73,8 @@ public class Settings2Activity extends ActionBarActivity {
         editor.commit();
         EditText restaurant = (EditText) findViewById(R.id.editText);
         TextView restaurantTextView = (TextView) findViewById(R.id.textView3);
-        mySetOfRestaurants.add(restaurant.getText().toString().toLowerCase());
+        String newRestaurant = restaurant.getText().toString().toLowerCase();
+        mySetOfRestaurants.add(newRestaurant);
         ((EditText) findViewById(R.id.editText)).setText("");
         restaurantPreferences = getSharedPreferences("restaurantPrefs", MODE_PRIVATE);
         editor.putStringSet("restaurants", mySetOfRestaurants);
@@ -82,6 +85,12 @@ public class Settings2Activity extends ActionBarActivity {
             restaurantString.append("\r\n");
         }
         restaurantTextView.setText(restaurantString);
+
+        Map<String, String> restaurantParams = new HashMap<String, String>();
+        restaurantParams.put("Restaurant_Name", newRestaurant);
+        FlurryAgent.logEvent("Restaurant_Added", restaurantParams, false);
+
+
     }
 
 /*    public void addItemsToSpinner() {
@@ -102,6 +111,20 @@ public class Settings2Activity extends ActionBarActivity {
         mySetOfRestaurants.clear();
         TextView restaurantTextView = (TextView) findViewById(R.id.textView3);
         restaurantTextView.setText("");
+        FlurryAgent.logEvent("Restaurants_Cleared");
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        FlurryAgent.onStartSession(this, "6629BN3RTQW9N2XGK5M5");
+    }
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
     }
 }
 

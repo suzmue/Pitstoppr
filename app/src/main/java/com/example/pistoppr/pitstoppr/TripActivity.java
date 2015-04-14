@@ -1,6 +1,5 @@
 package com.example.pistoppr.pitstoppr;
 
-import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -16,9 +14,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -29,14 +26,12 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.AutocompletePredictionBuffer;
-import com.google.android.gms.location.places.GeoDataApi;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -54,7 +49,6 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /*
@@ -127,6 +121,8 @@ public class TripActivity extends ActionBarActivity implements
 
         mRequestingLocationUpdates = true;
         mLastUpdateTime = "";
+        FlurryAgent.logEvent("On_Trip", null, true);
+
 
         // Kick off the process of building a GoogleApiClient and requesting the LocationServices
         // API.
@@ -204,6 +200,8 @@ public class TripActivity extends ActionBarActivity implements
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
+        FlurryAgent.onStartSession(this, "6629BN3RTQW9N2XGK5M5");
+
     }
 
     @Override
@@ -231,6 +229,7 @@ public class TripActivity extends ActionBarActivity implements
     protected void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
+        FlurryAgent.onEndSession(this);
     }
 
     @Override
@@ -632,6 +631,7 @@ public class TripActivity extends ActionBarActivity implements
     public void endTrip(View view){
         //Brings back to MainActivity
         Intent intent = new Intent(this, MainActivity.class);
+        FlurryAgent.endTimedEvent("ON_TRIP");
         startActivity(intent);
     }
 

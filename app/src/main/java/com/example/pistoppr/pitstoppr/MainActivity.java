@@ -19,7 +19,18 @@ public class MainActivity extends ActionBarActivity {
         FlurryAgent.init(this, "6629BN3RTQW9N2XGK5M5");
         setContentView(R.layout.activity_main);
     }
-
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        FlurryAgent.onStartSession(this, "6629BN3RTQW9N2XGK5M5");
+    }
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
