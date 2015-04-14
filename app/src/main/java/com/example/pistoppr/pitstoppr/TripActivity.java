@@ -121,6 +121,8 @@ public class TripActivity extends ActionBarActivity implements
 
         mRequestingLocationUpdates = true;
         mLastUpdateTime = "";
+        FlurryAgent.init(this, "6629BN3RTQW9N2XGK5M5");
+
         FlurryAgent.logEvent("On_Trip", null, true);
 
 

@@ -39,6 +39,8 @@ public class Settings2Activity extends ActionBarActivity {
             restaurantString.append(res);
             restaurantString.append("\r\n");
         }
+        FlurryAgent.init(this, "6629BN3RTQW9N2XGK5M5");
+
         TextView restaurantTextView = (TextView) findViewById(R.id.textView3);
         restaurantTextView.setText(restaurantString);
     }
