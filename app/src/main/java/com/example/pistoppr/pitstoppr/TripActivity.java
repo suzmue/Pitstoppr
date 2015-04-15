@@ -467,7 +467,7 @@ public class TripActivity extends ActionBarActivity implements
         Double myLong = latlng.longitude;
         if (restaurantName != null && myLat != null && myLong != null){
             mBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setSmallIcon(R.drawable.pitstopper_logo)
                     .setContentTitle("Restaurant Ahead!")
                     .setContentText(restaurantName + ". Click on me to go!");
 
