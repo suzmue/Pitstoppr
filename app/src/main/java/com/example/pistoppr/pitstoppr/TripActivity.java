@@ -505,11 +505,11 @@ public class TripActivity extends ActionBarActivity implements
         String restaurantName = "";
         Double destinationLatitude;
         Double destinationLongitude;
-        if (preferredRestaurantSet.contains("chipotle")){
+        if (preferredRestaurantSet.contains("chipotle") || preferredRestaurantSet.contains("chipolte")){
             restaurantName = "Chipotle";
             destinationLatitude = 42.362576;
             destinationLongitude = -71.085349;
-        } else if (preferredRestaurantSet.contains("starbucks")) {
+        } else if (preferredRestaurantSet.contains("starbucks") || preferredRestaurantSet.contains("starbuck's") || preferredRestaurantSet.contains("starbuck")) {
             restaurantName = "Starbucks";
             destinationLatitude = 42.3624239;
             destinationLongitude = -71.0877053;
