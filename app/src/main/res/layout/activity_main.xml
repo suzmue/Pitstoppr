@@ -1,15 +1,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:orientation="horizontal"
-    android:background="#CDB99C">
+    android:background="@color/background_color"
+    android:baselineAligned="true">
 
     <Button
-        android:layout_weight="4"
+        android:layout_weight="2"
         android:layout_width="0dp"
         android:layout_height="150px"
         android:text="@string/button_startTrip"
         android:onClick="startTrip"
-        android:background="#3399CC"
+        android:background="@color/button_color"
+        android:textColor="@color/text_color"
+        android:textSize="40px"
         android:id="@+id/" />
 
     <Button
@@ -17,7 +20,9 @@
         android:layout_width="0dp"
         android:layout_height="150px"
         android:text="@string/button_settings"
+        android:textColor="@color/text_color"
+        android:textSize="40px"
         android:onClick="openSettings"
-        android:background="#3399CC" />
+        android:background="@color/button_color" />
 
 </LinearLayout>

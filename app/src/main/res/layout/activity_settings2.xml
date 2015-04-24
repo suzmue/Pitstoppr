@@ -4,7 +4,7 @@
     tools:context="com.example.pistoppr.pitstoppr.Settings2Activity"
     android:paddingLeft="8dp" android:paddingRight="8dp"
     android:paddingTop="4dp" android:paddingBottom="4dp"
-    android:background="#CDB99C">
+    android:background="@color/background_color">
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,7 +27,9 @@
         android:text="@string/button_submit"
         android:layout_gravity="right"
         android:onClick="addRestaurant"
-        android:background="#3399CC" />
+        android:textColor="@color/text_color"
+        android:textSize="40px"
+        android:background="@color/button_color" />
 
 <!--    <TextView
         android:layout_width="wrap_content"
@@ -54,7 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="#ff0e5bae"
+        android:textColor="@color/text_color"
         android:id="@+id/textView3"
         android:textSize="30dp"
         android:textIsSelectable="false" />
@@ -65,7 +67,9 @@
         android:layout_gravity="center"
         android:text="Clear Restaurants"
         android:onClick="clearRestaurants"
-        android:background="#3399CC"
+        android:background="@color/button_color"
+        android:textColor="@color/text_color"
+        android:textSize="40px"
         android:id="@+id/" />
 
 
