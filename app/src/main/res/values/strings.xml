@@ -16,5 +16,6 @@
         <item>25 miles</item>
     </string-array>-->
     <string name="enter_restaurant">Enter a Restaurant</string>
+    <string name="background_color">#CDB99C</string>
 
 </resources>

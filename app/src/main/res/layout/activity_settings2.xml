@@ -4,7 +4,7 @@
     tools:context="com.example.pistoppr.pitstoppr.Settings2Activity"
     android:paddingLeft="8dp" android:paddingRight="8dp"
     android:paddingTop="4dp" android:paddingBottom="4dp"
-    android:background="#ffc3fffa">
+    android:background="#CDB99C">
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,7 +27,7 @@
         android:text="@string/button_submit"
         android:layout_gravity="right"
         android:onClick="addRestaurant"
-        android:background="#fffff9bf" />
+        android:background="#3399CC" />
 
 <!--    <TextView
         android:layout_width="wrap_content"
@@ -65,7 +65,8 @@
         android:layout_gravity="center"
         android:text="Clear Restaurants"
         android:onClick="clearRestaurants"
-        android:background="#fffff9bf" />
+        android:background="#3399CC"
+        android:id="@+id/" />
 
 
 </LinearLayout>

@@ -1,23 +1,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:orientation="horizontal"
-    android:background="#ffc3fffa">
+    android:background="#CDB99C"
+    android:id="@+id/">
 
     <Button
-        android:layout_weight="1"
+        android:layout_weight="4"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="150px"
         android:text="End Trip"
         android:onClick="endTrip"
-        android:background="#fffff9bf" />
+        android:background="#3399CC"
+        android:id="@+id/" />
 
     <Button
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="150px"
         android:text="@string/button_settings"
         android:onClick="openSettings"
-        android:background="#fffff9bf" />
+        android:background="#3399CC"
+        android:id="@+id/" />
 
 
 </LinearLayout>
