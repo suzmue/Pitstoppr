@@ -545,7 +545,50 @@ public class TripActivity extends ActionBarActivity implements
             restaurantName = "Bertucci's";
             destinationLatitude = 42.3629412;
             destinationLongitude = -71.0975141;
-        } else return;
+        } else if (preferredRestaurantSet.contains("asgard")){
+            restaurantName = "Asgard Irish Pub and Restaurant";
+            destinationLatitude = 42.3635694;
+            destinationLongitude = -71.1005423;
+        } else if (preferredRestaurantSet.contains("craigie on main")){
+            restaurantName = "Craigie On Main";
+            destinationLatitude = 42.3635694;
+            destinationLongitude = -71.1005423;
+        } else if (preferredRestaurantSet.contains("cinderellas") || preferredRestaurantSet.contains("cinderella's")){
+            restaurantName = "Cinderella's Restaurant";
+            destinationLatitude = 42.3635694;
+            destinationLongitude = -71.1005423;
+        } else if (preferredRestaurantSet.contains("middle east")){
+            restaurantName = "Middle East Restaurant and Nightclub";
+            destinationLatitude = 42.3635694;
+            destinationLongitude = -71.1005423;
+        } else if (preferredRestaurantSet.contains("beantown")){
+            restaurantName = "Beantown Taqueria";
+            destinationLatitude = 42.3619582;
+            destinationLongitude = -71.0987104;
+        } else if (preferredRestaurantSet.contains("chicago pizza")){
+            restaurantName = "Chicago Pizza";
+            destinationLatitude = 42.3619582;
+            destinationLongitude = -71.0987104;
+        } else if (preferredRestaurantSet.contains("area four")){
+            restaurantName = "Area Four";
+            destinationLatitude = 42.3627351;
+            destinationLongitude = -71.093641;
+        } else if (preferredRestaurantSet.contains("catalyst")){
+            restaurantName = "Catalyst";
+            destinationLatitude = 42.3627351;
+            destinationLongitude = -71.093641;
+        } else if (preferredRestaurantSet.contains("bailey and sage")){
+            restaurantName = "Bailey and Sage";
+            destinationLatitude = 42.3624933;
+            destinationLongitude = -71.0880513;
+        } else if (preferredRestaurantSet.contains("au bon pain")) {
+            restaurantName = "Au Bon Pain";
+            destinationLatitude = 42.3622991;
+            destinationLongitude = -71.0870964;
+        }
+
+
+        else return;
         mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("Restaurant Ahead!")
