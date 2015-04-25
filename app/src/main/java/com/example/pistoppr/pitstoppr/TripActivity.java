@@ -585,10 +585,7 @@ public class TripActivity extends ActionBarActivity implements
             restaurantName = "Au Bon Pain";
             destinationLatitude = 42.3622991;
             destinationLongitude = -71.0870964;
-        }
-
-
-        else return;
+        } else return;
         mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("Restaurant Ahead!")
