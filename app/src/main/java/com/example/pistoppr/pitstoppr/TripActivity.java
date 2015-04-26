@@ -48,7 +48,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /*
@@ -71,7 +73,7 @@ public class TripActivity extends ActionBarActivity implements
     /**
      * Radius from current location to search for preferred restaurants (in meters)
      */
-    private static int searchRadius = 5;
+    private static int searchRadius = 1000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -95,12 +97,18 @@ public class TripActivity extends ActionBarActivity implements
      */
     protected Location mCurrentLocation;
 
+    private Map<String, LatLng> restaurantToLocationMap = new HashMap<String, LatLng>();
+
+
+
     private String debuggerString;
 
     // Keys for storing activity state in the Bundle.
     protected final static String REQUESTING_LOCATION_UPDATES_KEY = "requesting-location-updates-key";
     protected final static String LOCATION_KEY = "location-key";
     protected final static String LAST_UPDATED_TIME_STRING_KEY = "last-updated-time-string-key";
+
+
 
 
     /**
@@ -121,6 +129,40 @@ public class TripActivity extends ActionBarActivity implements
 
         mRequestingLocationUpdates = true;
         mLastUpdateTime = "";
+
+        restaurantToLocationMap.put("chipotle", new LatLng(42.362576,-71.085349));
+        restaurantToLocationMap.put("chipolte", new LatLng(42.362576,-71.085349));
+        restaurantToLocationMap.put("starbucks", new LatLng(42.3624239,-71.0877053));
+        restaurantToLocationMap.put("starbuck's", new LatLng(42.3624239,-71.0877053));
+        restaurantToLocationMap.put("starbuck", new LatLng(42.3624239,-71.0877053));
+        restaurantToLocationMap.put("cosi", new LatLng(42.362521,-71.0876597));
+        restaurantToLocationMap.put("dunkin donuts", new LatLng(42.3599624,-71.0957251));
+        restaurantToLocationMap.put("dunkin' donuts", new LatLng(42.3599624,-71.0957251));
+        restaurantToLocationMap.put("dunkin donut", new LatLng(42.3599624,-71.0957251));
+        restaurantToLocationMap.put("dunkin' donut", new LatLng(42.3599624,-71.0957251));
+        restaurantToLocationMap.put("subway", new LatLng(42.3606192,-71.0967217));
+        restaurantToLocationMap.put("sebastians", new LatLng(42.3628686,-71.0891123));
+        restaurantToLocationMap.put("sebastian's", new LatLng(42.3628686,-71.0891123));
+        restaurantToLocationMap.put("mcdonalds", new LatLng(42.3644454,-71.103187));
+        restaurantToLocationMap.put("mcdonald's", new LatLng(42.3644454,-71.103187));
+        restaurantToLocationMap.put("mcdonald", new LatLng(42.3644454,-71.103187));
+        restaurantToLocationMap.put("quiznos", new LatLng(42.3625032,-71.0922972));
+        restaurantToLocationMap.put("bertuccis", new LatLng(42.3629412,-71.0975141));
+        restaurantToLocationMap.put("bertucci's", new LatLng(42.3629412,-71.0975141));
+        restaurantToLocationMap.put("asgard", new LatLng(42.3635694,-71.1005423));
+        restaurantToLocationMap.put("asgard irish pub", new LatLng(42.3635694,-71.1005423));
+        restaurantToLocationMap.put("asgards", new LatLng(42.3635694,-71.1005423));
+        restaurantToLocationMap.put("asgard's", new LatLng(42.3635694,-71.1005423));
+        restaurantToLocationMap.put("craigie on main", new LatLng(42.3635694,-71.1005423));
+        restaurantToLocationMap.put("cinderellas", new LatLng(42.3635694,-71.1005423));
+        restaurantToLocationMap.put("cinderella's", new LatLng(42.3635694,-71.1005423));
+        restaurantToLocationMap.put("cinderella", new LatLng(42.3635694,-71.1005423));
+        restaurantToLocationMap.put("beantown", new LatLng(42.3619582,-71.0987104));
+        restaurantToLocationMap.put("beantown taqueria", new LatLng(42.3619582,-71.0987104));
+        restaurantToLocationMap.put("area four", new LatLng(42.3627351,-71.093641));
+        restaurantToLocationMap.put("bailey and sage", new LatLng(42.3624933,-71.0880513));
+        restaurantToLocationMap.put("au bon pain", new LatLng(42.3622991,-71.0870964));
+
         FlurryAgent.init(this, "6629BN3RTQW9N2XGK5M5");
 
         FlurryAgent.logEvent("On_Trip", null, true);
@@ -496,6 +538,21 @@ public class TripActivity extends ActionBarActivity implements
         }
     }
 
+    /**
+     * @param destLat restaurant Latitude
+     * @param destLon restaurant Longitude
+     * @return true if distance between current location and the restaurant is less than searchRadius (else false)
+     */
+    private boolean checkRestaurantWithinRange(double destLat, double destLon) {
+        float[] floats = new float[1];
+        double currLat = mCurrentLocation.getLatitude();
+        double currLon = mCurrentLocation.getLongitude();
+        Location.distanceBetween(currLat, currLon, destLat, destLon, floats);
+        double distanceToRestaurant = floats[0];
+        return (floats[0] < searchRadius);
+    }
+
+
     //TODO
     //Currently being used
     private void mockLaunchNotification(){
@@ -503,89 +560,25 @@ public class TripActivity extends ActionBarActivity implements
         //TODO check if chipotle
         Set<String> preferredRestaurantSet = getPreferredRestaurantSet();
         String restaurantName = "";
-        Double destinationLatitude;
-        Double destinationLongitude;
-        if (preferredRestaurantSet.contains("chipotle") || preferredRestaurantSet.contains("chipolte")){
-            restaurantName = "Chipotle";
-            destinationLatitude = 42.362576;
-            destinationLongitude = -71.085349;
-        } else if (preferredRestaurantSet.contains("starbucks") || preferredRestaurantSet.contains("starbuck's") || preferredRestaurantSet.contains("starbuck")) {
-            restaurantName = "Starbucks";
-            destinationLatitude = 42.3624239;
-            destinationLongitude = -71.0877053;
-        } else if (preferredRestaurantSet.contains("cosi")){
-            restaurantName = "Cosi";
-            destinationLatitude = 42.362521;
-            destinationLongitude = -71.0876597;
-        } else if (preferredRestaurantSet.contains("dunkin donuts") || preferredRestaurantSet.contains("dunkin' donuts")){
-            restaurantName = "Dunkin' Donuts";
-            destinationLatitude = 42.3599624;
-            destinationLongitude = -71.0957251;
-        } else if (preferredRestaurantSet.contains("subway")){
-            restaurantName = "Subway";
-            destinationLatitude = 42.3606192;
-            destinationLongitude = -71.0967217;
-        } else if (preferredRestaurantSet.contains("sebastians") || preferredRestaurantSet.contains("sebastian's")){
-            restaurantName = "Sebastians";
-            destinationLatitude = 42.3628686;
-            destinationLongitude = -71.0891123;
-        } else if (preferredRestaurantSet.contains("mcdonalds") || preferredRestaurantSet.contains("mcdonald's")){
-            restaurantName = "McDonald's";
-            destinationLatitude = 42.3644454;
-            destinationLongitude = -71.103187;
-        } else if (preferredRestaurantSet.contains("clover") || preferredRestaurantSet.contains("clover food lab")){
-            restaurantName = "Clover Food Lab";
-            destinationLatitude = 42.3644454;
-            destinationLongitude = -71.103187;
-        } else if (preferredRestaurantSet.contains("quiznos")){
-            restaurantName = "Quiznos";
-            destinationLatitude = 42.3625032;
-            destinationLongitude = -71.0922972;
-        } else if (preferredRestaurantSet.contains("bertuccis") || preferredRestaurantSet.contains("bertucci's")){
-            restaurantName = "Bertucci's";
-            destinationLatitude = 42.3629412;
-            destinationLongitude = -71.0975141;
-        } else if (preferredRestaurantSet.contains("asgard")){
-            restaurantName = "Asgard Irish Pub and Restaurant";
-            destinationLatitude = 42.3635694;
-            destinationLongitude = -71.1005423;
-        } else if (preferredRestaurantSet.contains("craigie on main")){
-            restaurantName = "Craigie On Main";
-            destinationLatitude = 42.3635694;
-            destinationLongitude = -71.1005423;
-        } else if (preferredRestaurantSet.contains("cinderellas") || preferredRestaurantSet.contains("cinderella's")){
-            restaurantName = "Cinderella's Restaurant";
-            destinationLatitude = 42.3635694;
-            destinationLongitude = -71.1005423;
-        } else if (preferredRestaurantSet.contains("middle east")){
-            restaurantName = "Middle East Restaurant and Nightclub";
-            destinationLatitude = 42.3635694;
-            destinationLongitude = -71.1005423;
-        } else if (preferredRestaurantSet.contains("beantown")){
-            restaurantName = "Beantown Taqueria";
-            destinationLatitude = 42.3619582;
-            destinationLongitude = -71.0987104;
-        } else if (preferredRestaurantSet.contains("chicago pizza")){
-            restaurantName = "Chicago Pizza";
-            destinationLatitude = 42.3619582;
-            destinationLongitude = -71.0987104;
-        } else if (preferredRestaurantSet.contains("area four")){
-            restaurantName = "Area Four";
-            destinationLatitude = 42.3627351;
-            destinationLongitude = -71.093641;
-        } else if (preferredRestaurantSet.contains("catalyst")){
-            restaurantName = "Catalyst";
-            destinationLatitude = 42.3627351;
-            destinationLongitude = -71.093641;
-        } else if (preferredRestaurantSet.contains("bailey and sage")){
-            restaurantName = "Bailey and Sage";
-            destinationLatitude = 42.3624933;
-            destinationLongitude = -71.0880513;
-        } else if (preferredRestaurantSet.contains("au bon pain")) {
-            restaurantName = "Au Bon Pain";
-            destinationLatitude = 42.3622991;
-            destinationLongitude = -71.0870964;
-        } else return;
+        Double destinationLatitude = null;
+        Double destinationLongitude = null;
+
+        boolean keepGoing = false; //true if a restaurant is in the preferred set and is within range
+        for (String restaurant: restaurantToLocationMap.keySet()) {
+            LatLng restaurantLatLng = restaurantToLocationMap.get(restaurant);
+            double restaurantLat = restaurantLatLng.latitude;
+            double restaurantLon = restaurantLatLng.longitude;
+            if (preferredRestaurantSet.contains(restaurant) && checkRestaurantWithinRange(restaurantLat, restaurantLon)) {
+                keepGoing = true;
+                restaurantName = restaurant;
+                destinationLatitude = restaurantLat;
+                destinationLongitude = restaurantLon;
+            }
+        }
+
+        if (!keepGoing){
+            return;
+        }
         mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("Restaurant Ahead!")
