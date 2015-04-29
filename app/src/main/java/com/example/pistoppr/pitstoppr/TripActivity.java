@@ -476,11 +476,11 @@ public class TripActivity extends ActionBarActivity implements
      */
     @Override
     public void onLocationChanged(Location location) {
+
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         //notifyUsersWithHttp();
         //notifyUsersWithPlacesApi();
-        System.out.println(restaurantToLocationMap);
         mockLaunchNotification();
         //If restaurantResults != null, check if empty. If not empty, give notification
     }
@@ -566,7 +566,6 @@ public class TripActivity extends ActionBarActivity implements
 
         boolean keepGoing = false; //true if a restaurant is in the preferred set and is within range
         for (String restaurant: restaurantToLocationMap.keySet()) {
-            System.out.println(restaurant);
             LatLng restaurantLatLng = restaurantToLocationMap.get(restaurant);
             double restaurantLat = restaurantLatLng.latitude;
             double restaurantLon = restaurantLatLng.longitude;
