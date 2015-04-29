@@ -12,8 +12,7 @@
         android:onClick="startTrip"
         android:background="@color/button_color"
         android:textColor="@color/text_color"
-        android:textSize="40px"
-        android:id="@+id/" />
+        android:textSize="40px" />
 
     <Button
         android:layout_weight="1"

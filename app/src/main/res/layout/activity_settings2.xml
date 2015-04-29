@@ -70,7 +70,7 @@
         android:background="@color/button_color"
         android:textColor="@color/text_color"
         android:textSize="40px"
-        android:id="@+id/" />
+        android:id="@+id/clear_restaurants_button" />
 
 
 </LinearLayout>
